@@ -1,0 +1,21 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Confirmar cadastro";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmação de Email</title>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center">
+        <div>
+            <p>@Model</p>
+            <a href="/autenticacao/login" class="btn btn-primary">Ir para a tela de login</a>
+        </div>
+    </div>
+</body>
+</html>
