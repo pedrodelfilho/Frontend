@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Bem-vindo à Health&Med";
+}
+
+<div class="container py-5 px-4">
+    <div class="row mb-4">
+        <div class="col-md-6 d-flex flex-column justify-content-center">
+            <h1 class="display-4 fw-bold text-primary">Bem-vindo à Health&Med</h1>
+            <p class="lead text-secondary mt-3">
+                A <strong>Health&Med</strong> é uma startup inovadora no setor de saúde que está transformando a maneira como você cuida da sua saúde. Estamos desenvolvendo uma plataforma moderna e eficiente para revolucionar a <strong>Telemedicina</strong> no Brasil.
+            </p>
+            <p class="text-secondary">
+                Atualmente, oferecemos funcionalidades como:
+            </p>
+            <ul class="list-unstyled">
+                <li><i class="fas fa-check-circle text-success me-2"></i>Agendamento online de consultas</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Consultas médicas por videoconferência</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Acesso prático e rápido ao seu histórico médico</li>
+            </ul>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="~/img/telemedicina.jpeg" alt="Telemedicina" class="img-fluid rounded shadow" />
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6 text-center">
+            <img src="~/img/telemedicina1.jpg" alt="Telemedicina1" class="img-fluid rounded shadow" />
+        </div>
+        <div class="col-md-6 d-flex flex-column justify-content-center">
+            <h2 class="fw-bold text-primary">Tecnologia a favor da sua saúde</h2>
+            <p class="text-secondary mt-3">
+                Com o nosso sistema de Telemedicina, você pode realizar consultas sem sair de casa, com segurança, praticidade e acompanhamento profissional. Tudo isso com uma interface moderna e intuitiva.
+            </p>
+            <p class="text-secondary">
+                Nosso objetivo é oferecer uma experiência médica digital acessível, eficiente e centrada no paciente.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        h1, h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        p, ul li {
+            font-size: 1.1rem;
+        }
+
+        .lead {
+            font-size: 1.3rem;
+        }
+    </style>
+}

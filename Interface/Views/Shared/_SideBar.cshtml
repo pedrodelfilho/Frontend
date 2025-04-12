@@ -3,11 +3,12 @@
     <a href="~/home/index" class="brand-link">
         <img src="~/img/Logo.png" alt="Health&Med" class="brand-image img-circle elevation-3"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">Clínica CEFJP</span>
+        <span class="brand-text font-weight-light">Health&Med</span>
     </a>
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column text-sm" data-widget="treeview" role="menu" data-accordion="false">
+                @*Perfil*@
                 <li class="nav-item has-treeview menu-open">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-user"></i>
@@ -18,30 +19,19 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="/perfil/trocarsenha" class="nav-link active">
+                            <a href="/Perfil/ChangePassword" class="nav-link active">
                                 <i class="far fa-user nav-icon"></i>
                                 <p>Alterar a Senha</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="/perfil/gerenciar" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Gerenciar Usuários</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/exame/aprovacao" class="nav-link">
-                        <i class="nav-icon fas fa-clipboard-list"></i>
-                        <p>Aprovação de Exame</p>
-                    </a>
-                </li>
+                @*Consulta*@
                 <li class="nav-item has-treeview menu-open">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-stethoscope"></i>
                         <p>
-                            Exame
+                            Consulta
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -49,17 +39,67 @@
                         <li class="nav-item">
                             <a href="/exame/solicitacao" class="nav-link active">
                                 <i class="fas fa-share-square nav-icon"></i>
-                                <p>Solicitação de Exame</p>
+                                <p>Meus Agendamentos</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/exame/agendamento" class="nav-link active">
                                 <i class="fas fa-hospital-user nav-icon"></i>
-                                <p>Agendamento</p>
+                                <p>Novo Agendamento</p>
                             </a>
                         </li>
                     </ul>
                 </li>
+                @*Administração*@
+
+                @if (User.IsInRole("Administrador") || User.IsInRole("Medico"))
+                {
+
+                    <li class="nav-item has-treeview menu-open">
+                        <a href="" class="nav-link active">
+                            <i class="nav-icon fas fa-hammer"></i>
+                            <p>
+                                Gerenciar
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview">
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <li class="nav-item">
+                                    <a href="/Administracao/GerenciarUsuarios" class="nav-link active">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>Gerenciar Usuários</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Medico"))
+                            {
+                                <li class="nav-item">
+                                    <a href="/Administracao/DefinirAgenda" class="nav-link active">
+                                        <i class="fas fa-check nav-icon"></i>
+                                        <p>Aprovar Agendamento</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/Administracao/DefinirAgenda" class="nav-link active">
+                                        <i class="fas fa-calendar nav-icon"></i>
+                                        <p>Definir Agenda</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+
+                }
+                <div class="ms-auto p-3">
+                    <form action="@Url.Action("Logout", "Autenticacao")" method="post">
+                        <button type="submit" class="btn btn-danger w-100">
+                            Sair
+                        </button>
+                    </form>
+                </div>
             </ul>
         </nav>
     </div>

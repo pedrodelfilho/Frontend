@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Interface.Models;
 using Interface.Services.Interfaces;
+using Interface.Models.View;
+using System.Security.Claims;
 
 namespace Interface.Controllers
 {
@@ -14,16 +16,28 @@ namespace Interface.Controllers
         }
 
         [HttpGet]
-        public IActionResult TrocarSenha()
+        public IActionResult ChangePassword()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult TrocarSenha(AlterarSenhaViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
-                service.AlterarSenha(model);
+            {
+                try
+                {
+                    model.Email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+                    await service.AlterarSenha(model);
+                    ViewBag.MensagemSuccess = "Senha alterada com sucesso";
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.MensagemErro = ex.Message;
+                }
+            }
             return View(model); 
         }  
     }

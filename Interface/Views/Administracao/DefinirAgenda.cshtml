@@ -1,0 +1,75 @@
+﻿@model Interface.Models.DefinirAgendaModel
+@{
+    ViewData["Title"] = "Definir Agenda";
+}
+
+<div class="d-flex justify-content-center">
+    <div>
+        @if (ViewBag.MensagemErro != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.MensagemErro
+            </div>
+        }
+        @if (ViewBag.MensagemSuccess != null)
+        {
+            <div class="alert alert-success" role="success">
+                @ViewBag.MensagemSuccess
+            </div>
+        }
+        <h2 class="mb-4 text-primary text-center">Definir Agenda</h2>
+        <form method="post">
+            <div class="form-group">
+                <label for="Data">Data</label>
+                <input asp-for="NovaDisponibilidade.Data" class="form-control" type="date" />
+            </div>
+
+            <div class="form-group">
+                <label for="HoraInicio">Hora Início</label>
+                <input asp-for="NovaDisponibilidade.HoraInicio" class="form-control" type="time" />
+            </div>
+
+            <div class="form-group">
+                <label for="HoraFim">Hora Fim</label>
+                <input asp-for="NovaDisponibilidade.HoraFim" class="form-control" type="time" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+    </div>
+</div>
+<hr />
+<div class="d-flex justify-content-center">
+    <div>
+        <h2 class="mb-4 text-primary text-center">Disponibilidades cadastradas</h2>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Hora Início</th>
+                    <th>Hora Fim</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Disponibilidades)
+                {
+                    <tr>
+                        <td>@item.Data.ToShortDateString()</td>
+                        <td>@item.HoraInicio</td>
+                        <td>@item.HoraFim</td>
+                        <td>
+                            <form asp-action="ExcluirDisponibilidade" method="post">
+                                <input type="hidden" name="idDisponibilidade" value="@item.Id" />
+                                <button type="submit" class="btn btn-link p-0 font-weight-bold" style="color: red; font-size: 1rem;" title="Excluir">
+                                    Excluir
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

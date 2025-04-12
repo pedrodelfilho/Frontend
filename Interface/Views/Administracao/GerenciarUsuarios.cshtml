@@ -1,0 +1,64 @@
+﻿@model List<Interface.Models.GerenciarUsuariosModel>
+@{
+    ViewData["Title"] = "Gerenciar Usuários";
+}
+
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div>
+        <h2 class="mb-4 text-primary text-center">Gerenciar Usuários</h2>
+
+        <table class="table table-hover table-bordered shadow">
+            <thead class="table-primary">
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Alterar Role</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.Nome</td>
+                        <td>@usuario.Email</td>
+                        <td>@usuario.Role</td>
+                        <td>
+                            <form method="post" asp-action="AlterarRole">
+                                <input type="hidden" name="email" value="@usuario.Email" />
+                                <select name="novaRole" class="form-select form-select-sm d-inline w-auto" style="min-width: 150px;" required>
+                                    <option value="" disabled selected>Selecionar</option>
+                                    @foreach (var role in new[] { "Administrador", "Medico", "Paciente" })
+                                    {
+                                        if (role != usuario.Role)
+                                        {
+                                            <option value="@role">@role</option>
+                                        }
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Alterar</button>
+                            </form>
+                        </td>
+                        <td class="text-center">
+                            @if (usuario.Bloqueado)
+                            {
+                                <form method="post" asp-action="DesbloquearUsuario">
+                                    <input type="hidden" name="email" value="@usuario.Email" />
+                                    <button type="submit" class="btn btn-sm btn-success">Desbloquear</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-action="BloquearUsuario">
+                                    <input type="hidden" name="email" value="@usuario.Email" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Bloquear</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

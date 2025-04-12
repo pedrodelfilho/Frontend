@@ -1,9 +1,11 @@
 ﻿using Interface.Models;
+using Interface.Models.Response;
 using Interface.Services.Interfaces;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 internal class AutenticacaoService : IAutenticacaoService
@@ -18,8 +20,14 @@ internal class AutenticacaoService : IAutenticacaoService
             BaseAddress = new(ENDPOINT)
         };
     }
-    public async Task LoginAsync(LoginModel model)
+    public async Task<UsuarioLoginResponse> LoginAsync(LoginModel model)
     {
+        model.Email = model.EmailOuCpf;
+
+        if (model.TipoLogin == "paciente" && !IsEmail(model.EmailOuCpf ?? string.Empty))
+            model.Email = await ObterUsuarioAsync(model.EmailOuCpf ?? string.Empty);
+        else if (model.TipoLogin == "medico")
+            model.Email = await ObterUsuarioAsync(model.Crm ?? string.Empty);
 
         string contentJson = JsonSerializer.Serialize(model);
 
@@ -29,11 +37,10 @@ internal class AutenticacaoService : IAutenticacaoService
         request.Content = new StringContent(contentJson, Encoding.UTF8, "application/json");
 
         var response = await _httpClient.SendAsync(request);
+        var responseBody = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
         {
-            var responseBody = await response.Content.ReadAsStringAsync();
-
             using var document = JsonDocument.Parse(responseBody);
             var root = document.RootElement;
 
@@ -47,11 +54,37 @@ internal class AutenticacaoService : IAutenticacaoService
                 throw new Exception("Erro desconhecido ao autenticar.");
             }
         }
+        else
+        {
+            var tokenResponse = JsonSerializer.Deserialize<UsuarioLoginResponse>(responseBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
-        var token = await response.Content.ReadAsStringAsync();
-
+            if (tokenResponse == null || !tokenResponse.Sucesso)
+                throw new Exception("Erro ao fazer login");
+            return tokenResponse;
+        }
     }
+    private async Task<string?> ObterUsuarioAsync(string cpfOuCrm)
+    {
+        var response = await _httpClient.GetAsync($"{ENDPOINT}/obterusuario?crmOuCpf={cpfOuCrm}");
+        var responseBody = await response.Content.ReadAsStringAsync();
 
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        using var document = JsonDocument.Parse(responseBody);
+        var root = document.RootElement;
+
+        if (root.TryGetProperty("data", out var dataElement) &&
+            dataElement.TryGetProperty("email", out var emailElement))
+        {
+            return emailElement.GetString();
+        }
+
+        return null;
+    }
     public async Task<bool> ConfirmarEmail(ConfirmarEmailModel model)
     {
         string url = ENDPOINT + "/confirmaremail";
@@ -150,8 +183,6 @@ internal class AutenticacaoService : IAutenticacaoService
 
         return resultado;
     }
-
-
     public async Task<Dictionary<string, string>> RecoverPassword(RecoverPassword model)
     {
         try
@@ -185,5 +216,9 @@ internal class AutenticacaoService : IAutenticacaoService
         {
             throw new Exception(ex.Message);
         }
+    }
+    public static bool IsEmail(string valor)
+    {
+        return Regex.IsMatch(valor ?? "", @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
     }
 }

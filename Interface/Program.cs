@@ -7,18 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
+
 
 // Configuração de autenticação com cookies
 builder.Services.AddAuthentication("Interface")
     .AddCookie("Interface", options =>
     {
-        // Redireciona para a página de login
         options.LoginPath = "/Autenticacao/Login";
-        // Redireciona em caso de acesso não autorizado
         options.AccessDeniedPath = "/Autenticacao/AccessDenied";
-        // Redireciona após logout
         options.LogoutPath = "/Autenticacao/Logout";
-        // Parâmetro de URL para retorno após login
         options.ReturnUrlParameter = "a";
     });
 
@@ -26,14 +24,17 @@ builder.Services.AddAuthentication("Interface")
 builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
 builder.Services.AddScoped<IPerfilService, PerfilService>();
 builder.Services.AddScoped<IExameService, ExameService>();
+builder.Services.AddScoped<IAdministracaoService, AdministracaoService>();
+builder.Services.AddScoped<IMedicoService, MedicoService>();
+
 
 var app = builder.Build();
 
 // Configuração do pipeline de requisição HTTP
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts(); // HSTS para ambientes de produção
+    app.UseExceptionHandler("/Shared/Error");
+    app.UseHsts(); 
 }
 
 app.UseHttpsRedirection();
@@ -50,7 +51,7 @@ app.UseAuthorization();
 // Mapeamento das rotas padrão
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Autenticacao}/{action=Login}/{id?}");
 
 // Inicia o aplicativo
 app.Run();

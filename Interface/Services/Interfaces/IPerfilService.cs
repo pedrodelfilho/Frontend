@@ -1,9 +1,10 @@
 ﻿using Interface.Models;
+using Interface.Models.View;
 
 namespace Interface.Services.Interfaces
 {
     public interface IPerfilService
     {
-        Task<string> AlterarSenha(AlterarSenhaViewModel alterarSenhaViewModel);
+        Task<string> AlterarSenha(ChangePasswordViewModel alterarSenhaViewModel);
     }
 }
