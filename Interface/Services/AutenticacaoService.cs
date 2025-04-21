@@ -20,7 +20,7 @@ internal class AutenticacaoService : IAutenticacaoService
             BaseAddress = new(ENDPOINT)
         };
     }
-    public async Task<UsuarioLoginResponse> LoginAsync(LoginModel model)
+    public async Task<UsuarioResponse> LoginAsync(LoginModel model)
     {
         model.Email = model.EmailOuCpf;
 
@@ -56,7 +56,7 @@ internal class AutenticacaoService : IAutenticacaoService
         }
         else
         {
-            var tokenResponse = JsonSerializer.Deserialize<UsuarioLoginResponse>(responseBody, new JsonSerializerOptions
+            var tokenResponse = JsonSerializer.Deserialize<UsuarioResponse>(responseBody, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });

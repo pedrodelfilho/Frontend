@@ -1,4 +1,6 @@
 ﻿using Interface.Models;
+using Interface.Models.Enum;
+using Interface.Models.View;
 using Interface.Services.Interfaces;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -14,6 +16,7 @@ namespace Interface.Services
         private readonly string ENDPOINT = "http://localhost:5153/api/v1";
         private readonly string RESOURCE_USER = "/user";
         private readonly string RESOURCE_MEDICO = "/medico";
+        private readonly string RESOURCE_CONSULTA = "/consulta";
         private readonly HttpClient _httpClient;
 
         public AdministracaoService(IHttpContextAccessor httpContextAccessor)
@@ -312,13 +315,12 @@ namespace Interface.Services
             }
         }
 
-
         public async Task<List<GerenciarUsuariosModel>> PreencherGridView()
         {
             return await ObterTodosUsuarios();
         }
 
-        private async Task<List<GerenciarUsuariosModel>> ObterTodosUsuarios()
+        public async Task<List<GerenciarUsuariosModel>> ObterTodosUsuarios()
         {
             string url = ENDPOINT + RESOURCE_USER + "/obterusuarios";
 
@@ -375,6 +377,109 @@ namespace Interface.Services
             }
 
             return listaUsuarios ?? new List<GerenciarUsuariosModel>();
+        }
+
+        public async Task<DisponibilidadeMedicoListagemModel> ObterDisponibilidadeId(long idDisponibilidade)
+        {
+            string url = $"{ENDPOINT + RESOURCE_MEDICO}/obterdisponibilidadeid?idDisponibilidade={idDisponibilidade}";
+            var token = _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+            if (string.IsNullOrEmpty(token))
+                throw new Exception("Token não encontrado. Faça login novamente.");
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            using var document = JsonDocument.Parse(responseBody);
+            var root = document.RootElement;
+
+            if (root.TryGetProperty("data", out var dataElement))
+            {
+
+                return new DisponibilidadeMedicoListagemModel
+                {
+                    Id = dataElement.GetProperty("id").ToString(),
+                    Data = dataElement.GetProperty("data").GetDateTime(),
+                    HoraInicio = TimeSpan.Parse(dataElement.GetProperty("horaInicio").ToString()),
+                    HoraFim = TimeSpan.Parse(dataElement.GetProperty("horaFim").ToString())
+                };
+            }
+
+            return null;
+        }
+
+        public async Task<List<AgendamentoAprovacaoViewModel>> ObterAgendamentoAprovacao(string email)
+        {
+            string url = $"{ENDPOINT + RESOURCE_CONSULTA}/obterconsultapendente?email={email}";
+            var token = _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+            if (string.IsNullOrEmpty(token))
+                throw new Exception("Token não encontrado. Faça login novamente.");
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            using var document = JsonDocument.Parse(responseBody);
+            var root = document.RootElement;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (root.TryGetProperty("detail", out var detailElement))
+                {
+                    var detailMessage = detailElement.GetString();
+                    throw new Exception(detailMessage);
+                }
+                else if (root.TryGetProperty("errors", out var detailElement2))
+                {
+                    foreach (var property in detailElement2.EnumerateObject())
+                    {
+                        foreach (var error in property.Value.EnumerateArray())
+                        {
+                            var detailMessage = error.GetString();
+                            throw new Exception(detailMessage);
+                        }
+                        break;
+                    }
+                }
+                throw new Exception("Erro ao consultar.");
+            }
+
+            var agendamentos = new List<AgendamentoAprovacaoViewModel>();
+
+            if (root.TryGetProperty("data", out var dataElement))
+            {
+                foreach (var userElement in dataElement.EnumerateArray())
+                {
+                    var elemento = userElement.GetRawText();
+                    var agendamento = JsonSerializer.Deserialize<AgendamentoAprovacaoViewModel>(elemento, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    if (agendamento != null)
+                    {
+                        agendamento.StatusDescricao = StatusConsultaHelper.GetEnumDescription((StatusConsulta)Convert.ToByte(agendamento.StatusDescricao));
+                        agendamentos.Add(agendamento);
+                    }
+                }
+
+                return agendamentos;
+            }
+
+            return null;
         }
     }
 }

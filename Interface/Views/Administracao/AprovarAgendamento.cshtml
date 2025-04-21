@@ -1,0 +1,83 @@
+﻿@model List<Interface.Models.View.AgendamentoAprovacaoViewModel>
+
+@{
+    ViewData["Title"] = "Aprovar Agendamentos";
+}
+
+<div class="d-flex justify-content-center">
+    <div>
+        @if (TempData["MensagemErro"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["MensagemErro"]
+            </div>
+        }
+        @if (TempData["MensagemSuccess"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["MensagemSuccess"]
+            </div>
+        }
+
+        <h2 class="mb-4 text-primary text-center">Agendamento de consulta</h2>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Especialidade</th>
+                    <th>Data</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.PacienteNome</td>
+                        <td>@item.MedicoNome</td>
+                        <td>@item.Especialidade</td>
+                        <td>@item.Data</td>
+                        <td>@item.HoraInicio</td>
+                        <td>@item.HoraFim</td>
+                        <td>@item.StatusDescricao</td>
+                        <td>
+                            @if (@item.StatusDescricao != "Cancelada paciente" &&
+                                 @item.StatusDescricao != "Cancelada médico" &&
+                                 @item.StatusDescricao != "Realizada" &&
+                                 @item.StatusDescricao != "Autorizado")
+                            {
+                                <form asp-action="Aprovar" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm">Aprovar</button>
+                                </form>
+                                <form asp-action="Negar" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Negar</button>
+                                </form>
+                            }
+                            else if (@item.StatusDescricao == "Autorizado")
+                            {
+                                <form asp-action="Negar" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">indisponível</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

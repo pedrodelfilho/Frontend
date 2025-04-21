@@ -1,4 +1,5 @@
 ﻿using Interface.Models;
+using Interface.Models.View;
 
 namespace Interface.Services.Interfaces
 {
@@ -10,6 +11,9 @@ namespace Interface.Services.Interfaces
         Task AlterarRoleUsuario(string email, string role);
         Task RemoverDisponibilidade(long idDisponibilidade);
         Task<List<DisponibilidadeMedicoListagemModel>> ObterDisponibilidadeAtual(string email);
+        Task<DisponibilidadeMedicoListagemModel> ObterDisponibilidadeId(long idDisponibilidade);
         Task<DisponibilidadeMedicoModel> AdicionarDisponibilidade(DisponibilidadeMedicoModel model);
+        Task<List<GerenciarUsuariosModel>> ObterTodosUsuarios();
+        Task<List<AgendamentoAprovacaoViewModel>> ObterAgendamentoAprovacao(string email);
     }
 }

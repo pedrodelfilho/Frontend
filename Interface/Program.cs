@@ -23,9 +23,9 @@ builder.Services.AddAuthentication("Interface")
 // Registrando os serviços
 builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
 builder.Services.AddScoped<IPerfilService, PerfilService>();
-builder.Services.AddScoped<IExameService, ExameService>();
 builder.Services.AddScoped<IAdministracaoService, AdministracaoService>();
 builder.Services.AddScoped<IMedicoService, MedicoService>();
+builder.Services.AddScoped<IConsultaService, ConsultaService>();
 
 
 var app = builder.Build();

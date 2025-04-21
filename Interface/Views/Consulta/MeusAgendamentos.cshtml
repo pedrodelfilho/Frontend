@@ -1,0 +1,68 @@
+﻿@model List<Interface.Models.View.AgendamentoViewModel>
+
+@{
+    ViewData["Title"] = "Meus Agendamentos";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary text-center mb-4">Meus Agendamentos</h2>
+
+    <!-- Exibir mensagem de erro, se houver -->
+    @if (TempData["MensagemErro"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["MensagemErro"]
+        </div>
+    }
+
+    <!-- Exibir mensagem de sucesso, se houver -->
+    @if (TempData["MensagemSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["MensagemSuccess"]
+        </div>
+    }
+
+    <!-- Tabela de Agendamentos -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Médico</th>
+                <th>Especialidade</th>
+                <th>Hora Início</th>
+                <th>Hora Fim</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var agendamento in Model)
+            {
+                <tr>
+                    <td>@agendamento.Data.ToString("dd/MM/yyyy")</td>
+                    <td>@agendamento.MedicoNome</td>
+                    <td>@agendamento.Especialidade</td>
+                    <td>@agendamento.HoraInicio</td>
+                    <td>@agendamento.HoraFim</td>
+                    <td>@agendamento.Status</td>
+                    <td>
+                        @if (agendamento.Status != "Cancelada paciente" &&
+                             agendamento.Status != "Cancelada médico" &&
+                             agendamento.Status != "Realizada")
+                        {
+                            <form method="post" action="@Url.Action("CancelarAgendamento", "Consulta")" style="display:inline;">
+                                <input type="hidden" name="id" value="@agendamento.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">indisponível</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

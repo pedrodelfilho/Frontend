@@ -37,13 +37,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="/exame/solicitacao" class="nav-link active">
+                            <a href="/consulta/meusagendamentos" class="nav-link active">
                                 <i class="fas fa-share-square nav-icon"></i>
                                 <p>Meus Agendamentos</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/exame/agendamento" class="nav-link active">
+                            <a href="/consulta/agendamento" class="nav-link active">
                                 <i class="fas fa-hospital-user nav-icon"></i>
                                 <p>Novo Agendamento</p>
                             </a>
@@ -77,7 +77,7 @@
                             @if (User.IsInRole("Medico"))
                             {
                                 <li class="nav-item">
-                                    <a href="/Administracao/DefinirAgenda" class="nav-link active">
+                                    <a href="/Administracao/AprovarAgendamento" class="nav-link active">
                                         <i class="fas fa-check nav-icon"></i>
                                         <p>Aprovar Agendamento</p>
                                     </a>

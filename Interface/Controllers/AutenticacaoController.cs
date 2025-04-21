@@ -77,7 +77,7 @@ namespace Interface.Controllers
         [HttpGet]
         public async Task<IActionResult> SignUp()
         {
-            var especialidades = await _mediicoService.ObterEspecialidades(); // <- await aqui
+            var especialidades = await _mediicoService.ObterEspecialidades();
 
             var model = new SignUpModel
             {

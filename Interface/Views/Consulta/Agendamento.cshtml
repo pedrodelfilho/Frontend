@@ -1,0 +1,134 @@
+﻿@model Interface.Models.AgendamentoModel
+@{
+    ViewData["Title"] = "Agendar Consulta";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary text-center mb-4">Agendar Consulta</h2>
+
+    @if (TempData["MensagemErro"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["MensagemErro"]
+        </div>
+    }
+
+    @if (TempData["MensagemSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["MensagemSuccess"]
+        </div>
+    }
+
+    <form id="form-agendamento" method="post">
+        <div class="form-group">
+            <label asp-for="IdEspecialidade"></label>
+            <select id="especialidade-select" asp-for="IdEspecialidade" class="form-control" asp-items="Model.Especialidades">
+                <option value="">Selecione uma especialidade</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Médico</label>
+            <select id="medico-select" name="IdMedico" class="form-control" disabled>
+                <option value="">Selecione uma especialidade primeiro</option>
+            </select>
+        </div>
+
+        <div id="horarios-container" class="mt-4"></div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#especialidade-select').val('');
+            $('#medico-select').val('').prop('disabled', true);
+            $('#horarios-container').empty();
+
+            $('#especialidade-select').change(function () {
+                const idEspecialidade = $(this).val();
+                $('#medico-select').prop('disabled', true).html('<option>Carregando...</option>');
+                $('#horarios-container').empty();
+
+                if (idEspecialidade) {
+                    $.get(`/Consulta/ObterMedicosPorEspecialidade?idEspecialidade=${idEspecialidade}`, function (medicos) {
+                        let options = '<option value="">Selecione um médico</option>';
+                        medicos.forEach(m => {
+                            options += `<option value="${m.id}" data-email="${m.email}">${m.nomeCompleto}</option>`;
+                        });
+                        $('#medico-select').html(options).prop('disabled', false);
+                    });
+                }
+            });
+
+            $('#medico-select').change(function () {
+                const selectedOption = $(this).find('option:selected');
+                const email = selectedOption.data('email');
+                $('#horarios-container').empty();
+
+                if (email) {
+                    $.get(`/Consulta/ObterHorariosDisponiveis?email=${email}`, function (horarios) {
+                        if (!horarios || horarios.length === 0) {
+                            $('#horarios-container').html('<p class="text-danger">Nenhum horário disponível.</p>');
+                            return;
+                        }
+
+                        let html = `<h5>Horários disponíveis:</h5>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Hora Início</th>
+                                                <th>Hora Fim</th>
+                                                <th>Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+
+                        horarios.forEach(horario => {
+                            html += `
+                                        <tr>
+                                            <td>${horario.data.split('T')[0]}</td>
+                                            <td>${horario.horaInicio}</td>
+                                            <td>${horario.horaFim}</td>
+                                            <td>
+                                                <button class="btn btn-success btn-sm btn-agendar" data-id="${horario.id}" data-email="${email}">
+                                                    Agendar
+                                                </button>
+                                            </td>
+                                        </tr>`;
+                        });
+
+                        html += '</tbody></table>';
+                        $('#horarios-container').html(html);
+                    });
+                }
+            });
+
+            $(document).on('click', '.btn-agendar', function () {
+                const $btn = $(this);
+                const idDisponibilidade = $btn.data('id');
+                const emailMedico = $btn.data('email');
+
+                $btn.prop('disabled', true).text('Agendando...');
+
+                $.post('/Consulta/AgendarHorario', {
+                    IdDisponibilidade: idDisponibilidade,
+                    EmailMedico: emailMedico
+                }).done(function (result) {
+                    if (result.success) {
+                        alert(result.message || "Erro ao agendar.");
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        alert(result.message || "Erro ao agendar.");
+                        $btn.prop('disabled', false).text('Agendar');
+                    }
+                }).fail(function () {
+                    alert("Erro na requisição.");
+                    $btn.prop('disabled', false).text('Agendar');
+                });
+            });
+        });
+    </script>
+}

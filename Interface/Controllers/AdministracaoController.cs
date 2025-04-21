@@ -1,10 +1,8 @@
 ﻿using Interface.Models;
-using Interface.Services;
+using Interface.Models.Enum;
 using Interface.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 using System.Security.Claims;
 
 namespace Interface.Controllers
@@ -12,10 +10,12 @@ namespace Interface.Controllers
     public class AdministracaoController : Controller
     {
         private readonly IAdministracaoService _administracaoService;
+        private readonly IConsultaService _consultaService;
 
-        public AdministracaoController(IAdministracaoService administracaoService)
+        public AdministracaoController(IAdministracaoService administracaoService, IConsultaService consultaService)
         {
             _administracaoService = administracaoService;
+            _consultaService = consultaService;
         }
 
         public async Task<IActionResult> GerenciarUsuarios()
@@ -152,6 +152,51 @@ namespace Interface.Controllers
             }
         }
 
+        [Authorize(Roles = "Medico")]
+        [HttpGet]
+        public async Task<IActionResult> AprovarAgendamento()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var agendamentos = await _administracaoService.ObterAgendamentoAprovacao(email);
 
+            var model = agendamentos;
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Medico")]
+        [HttpPost]
+        public async Task<IActionResult> Aprovar(long id)
+        {
+            try
+            {
+                await _consultaService.AprovarAgendamento(id, StatusConsulta.Autorizado);
+                TempData["MensagemSuccess"] = "Agendamento aprovado com sucesso!";
+                return RedirectToAction("AprovarAgendamento");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemErro"] = ex.Message;
+                return RedirectToAction("AprovarAgendamento");
+            }
+        }
+
+        [Authorize(Roles = "Medico")]
+        [HttpPost]
+        public async Task<IActionResult> Negar(long id)
+        {
+            try
+            {
+                await _consultaService.CancelarAgendamento(id, StatusConsulta.CanceladoMedico);
+                TempData["MensagemSuccess"] = "Agendamento cancelado com sucesso!";
+                return RedirectToAction("AprovarAgendamento");
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemErro"] = ex.Message;
+                return RedirectToAction("AprovarAgendamento");
+            }
+        }
     }
 }

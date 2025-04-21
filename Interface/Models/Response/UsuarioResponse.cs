@@ -2,7 +2,7 @@
 
 namespace Interface.Models.Response
 {
-    public class UsuarioLoginResponse
+    public class UsuarioResponse
     {
         public bool Sucesso => Erros.Count == 0;
 
@@ -14,9 +14,9 @@ namespace Interface.Models.Response
 
         public List<string> Erros { get; set; } = new List<string>();
 
-        public UsuarioLoginResponse() { }
+        public UsuarioResponse() { }
 
-        public UsuarioLoginResponse(bool sucesso, string accessToken, string refreshToken)
+        public UsuarioResponse(bool sucesso, string accessToken, string refreshToken)
         {
             AccessToken = accessToken;
             RefreshToken = refreshToken;

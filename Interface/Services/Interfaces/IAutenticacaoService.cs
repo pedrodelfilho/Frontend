@@ -5,7 +5,7 @@ namespace Interface.Services.Interfaces
 {
     public interface IAutenticacaoService
     {
-        Task<UsuarioLoginResponse> LoginAsync(LoginModel model);
+        Task<UsuarioResponse> LoginAsync(LoginModel model);
         Task<Dictionary<string,string>> EsqueciASenha(EsqueciASenhaViewModel model);
         Task<bool> ConfirmarEmail(ConfirmarEmailModel model);
         Task<Dictionary<string, string>> CadastrarUsuarioAsync(SignUpModel model);
