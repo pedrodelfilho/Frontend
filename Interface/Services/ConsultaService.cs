@@ -13,7 +13,7 @@ namespace Interface.Services
 {
     public class ConsultaService : IConsultaService
     {
-        private readonly string ENDPOINT = "https://backendd-dahvaje9b9gjehea.brazilsouth-01.azurewebsites.net/api/v1/consulta";
+        private readonly string ENDPOINT = "https://backend-g5arfxe6enhdf9d6.brazilsouth-01.azurewebsites.net/api/v1/consulta";
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private readonly IAdministracaoService _administracaoService;
