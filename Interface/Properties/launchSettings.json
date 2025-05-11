@@ -30,7 +30,7 @@
       "applicationUrl": "https://frontendd-g2checd7czhghpf5.brazilsouth-01.azurewebsites.net",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production",
-        "API_BASE_URL": "https://backend-g5arfxe6enhdf9d6.brazilsouth-01.azurewebsites.net"
+        "API_BASE_URL": "https://backendd-dahvaje9b9gjehea.brazilsouth-01.azurewebsites.net"
       }
     }
   }

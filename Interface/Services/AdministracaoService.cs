@@ -13,7 +13,7 @@ namespace Interface.Services
     public class AdministracaoService : IAdministracaoService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string ENDPOINT = "https://backend-g5arfxe6enhdf9d6.brazilsouth-01.azurewebsites.net/api/v1";
+        private readonly string ENDPOINT = "https://backendd-dahvaje9b9gjehea.brazilsouth-01.azurewebsites.net/api/v1";
         private readonly string RESOURCE_USER = "/user";
         private readonly string RESOURCE_MEDICO = "/medico";
         private readonly string RESOURCE_CONSULTA = "/consulta";
