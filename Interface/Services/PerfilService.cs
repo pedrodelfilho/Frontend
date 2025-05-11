@@ -11,7 +11,7 @@ namespace Interface.Services
     public class PerfilService : IPerfilService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string ENDPOINT = "http://localhost:5153/api/v1/user";
+        private readonly string ENDPOINT = "https://backend-g5arfxe6enhdf9d6.brazilsouth-01.azurewebsites.net/api/v1/user";
         private readonly HttpClient _httpClient;
 
         public PerfilService(IHttpContextAccessor httpContextAccessor)

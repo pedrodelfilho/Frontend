@@ -23,6 +23,15 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Azure Production Simulation": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://frontendd-g2checd7czhghpf5.brazilsouth-01.azurewebsites.net",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "API_BASE_URL": "https://backend-g5arfxe6enhdf9d6.brazilsouth-01.azurewebsites.net"
+      }
     }
   }
 }

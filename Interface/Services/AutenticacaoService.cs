@@ -10,7 +10,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 internal class AutenticacaoService : IAutenticacaoService
 {
-    private readonly string ENDPOINT = "http://localhost:5153/api/v1/user";
+    private readonly string ENDPOINT = "https://backend-g5arfxe6enhdf9d6.brazilsouth-01.azurewebsites.net/api/v1/user";
     private readonly HttpClient _httpClient;
 
     public AutenticacaoService()
